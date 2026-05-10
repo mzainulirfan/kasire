@@ -1,166 +1,178 @@
-# Kasire
+# KASIRE
 
-A simple cashier/user management web application built with Node.js, Express.js, Tailwind CSS, and Vanilla JavaScript.
+KASIRE adalah aplikasi kasir dan manajemen toko berbasis Node.js, Express, SQLite, dan Vanilla JavaScript. Aplikasi ini menyediakan halaman admin untuk mengelola user/customer, product, kategori, diskon, transaksi POS, riwayat penjualan, profile, dan pengaturan admin.
 
-This project is designed as a lightweight fullstack application without using a SQL database. Data is stored locally using JSON files, making it suitable for learning purposes, prototypes, and small-scale applications.
+## Fitur
 
----
-
-## Features
-
-- User data management
-- Dashboard interface
-- Add and delete data
-- Realtime search/filter
-- Frontend & backend validation
-- JSON-based local storage
-- Responsive UI with Tailwind CSS
-- Lightweight and beginner-friendly architecture
-
----
+- Login/logout admin berbasis session.
+- Dashboard admin.
+- Manajemen user/customer.
+- Promosi user menjadi admin dan pencabutan akses admin.
+- Manajemen product dengan SKU, kategori, harga, stok, status, dan foto product.
+- Upload foto product maksimal 4 file, maksimal 5 MB per file.
+- Manajemen kategori product.
+- Manajemen diskon nominal dan persen.
+- POS untuk membuat transaksi.
+- Riwayat transaksi dan detail penjualan.
+- Update stok otomatis saat transaksi dibuat.
+- Validasi input di backend dan frontend.
 
 ## Tech Stack
 
 - Node.js
 - Express.js
-- Tailwind CSS
+- Express Session
+- better-sqlite3
+- bcryptjs
+- multer
+- Tailwind CSS via CDN/class utility di frontend
 - Vanilla JavaScript
-- JSON File Storage
 
----
-
-## Project Structure
+## Struktur Project
 
 ```txt
-kasire/
-├── data/              # JSON storage
-├── public/            # Frontend assets
-│   ├── css/
-│   ├── js/
-│   └── pages/
-├── src/               # Backend logic & utilities
-├── server.js          # Main server entry
-├── package.json
-└── README.md
+fullname/
+|-- data/
+|   |-- app.sqlite          # Database utama SQLite
+|   |-- admins.json         # Seed admin lama/fallback
+|   `-- users.json          # Seed user lama/fallback
+|-- public/
+|   |-- assets/
+|   |   |-- css/app.css
+|   |   `-- js/
+|   |-- pages/              # Halaman SPA
+|   |-- partials/           # Header dan sidebar
+|   `-- uploads/products/   # File foto product
+|-- src/
+|   |-- lib/                # Store, validasi, database, upload
+|   |-- middleware/         # Middleware auth
+|   |-- routes/             # Route web dan API
+|   `-- app.js              # Konfigurasi Express
+|-- server.js               # Entry point server
+|-- package.json
+`-- README.md
 ```
 
----
-
-## Installation
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/mzainulirfan/kasire.git
-cd kasire
-```
-
-### 2. Install Dependencies
+## Instalasi
 
 ```bash
 npm install
 ```
 
-### 3. Run Application
+## Menjalankan Aplikasi
 
 ```bash
 npm start
 ```
 
-Server will run at:
+Server berjalan di:
 
 ```txt
 http://localhost:3000
 ```
 
----
+Port bisa diubah dengan environment variable `PORT`.
 
-## Available Routes
-
-| Route | Description |
-|---|---|
-| `/` | Homepage |
-| `/form` | User input form |
-| `/dashboard` | User dashboard |
-
----
-
-## Data Storage
-
-This project uses local JSON storage instead of a database.
-
-Example:
-
-```txt
-data/users.json
+```bash
+PORT=4000 npm start
 ```
 
-Suitable for:
-- Learning projects
-- Local applications
-- Simple CRUD systems
-- Prototyping
+PowerShell:
 
----
-
-## Validation
-
-Validation is implemented on both:
-
-- Frontend
-- Backend
-
-This helps maintain data consistency and improve application reliability.
-
----
-
-## Screenshots
-
-Add your application screenshots here.
-
-Example:
-
-```md
-![Dashboard Preview](./public/assets/dashboard-preview.png)
+```powershell
+$env:PORT = "4000"; npm start
 ```
 
----
+Untuk production/local yang lebih aman, set juga `SESSION_SECRET`.
 
-## Future Improvements
+```bash
+SESSION_SECRET="ganti-dengan-secret-yang-kuat" npm start
+```
 
-- [ ] Edit/update data
-- [ ] Authentication & authorization
-- [ ] SQLite/MySQL integration
-- [ ] Export PDF/Excel
-- [ ] Pagination
-- [ ] Dark mode
-- [ ] REST API support
+PowerShell:
 
----
+```powershell
+$env:SESSION_SECRET = "ganti-dengan-secret-yang-kuat"; npm start
+```
 
-## Development Notes
+## Data dan Seed
 
-This project is intentionally built with a simple architecture to make it easier for beginners to understand how frontend and backend interact in a fullstack JavaScript application.
+Aplikasi memakai SQLite di `data/app.sqlite`. Saat server pertama kali berjalan, schema akan dibuat otomatis dan data awal akan di-seed dari:
 
----
+- `data/users.json` untuk user/customer.
+- `data/admins.json` untuk admin jika tabel admin masih kosong.
+- product default dari `src/lib/database.js`.
+- kategori default dari kategori product yang ada.
 
-## Contributing
+File upload product disimpan di `public/uploads/products`.
 
-Pull requests are welcome.
+## Autentikasi
 
-For major changes, please open an issue first to discuss what you would like to change.
+Semua halaman utama selain `/login` dilindungi session login admin. Data admin tersimpan di tabel `admins`.
 
----
+Catatan:
+
+- Admin awal berasal dari `data/admins.json` atau default seed di `src/lib/database.js` saat tabel admin kosong.
+- User yang dipromosikan menjadi admin lewat fitur user mendapatkan password awal `user12345`.
+- Password admin bisa diganti lewat halaman profile.
+
+## Halaman Web
+
+| Route | Keterangan |
+| --- | --- |
+| `/login` | Login admin |
+| `/users` | Manajemen user/customer |
+| `/dashboard` | Dashboard |
+| `/products` | Daftar product |
+| `/products/new` | Tambah product |
+| `/products/:id` | Detail product |
+| `/products/:id/edit` | Edit product |
+| `/categories` | Manajemen kategori |
+| `/discounts` | Manajemen diskon |
+| `/pos` | Point of Sales |
+| `/sales` | Riwayat penjualan |
+| `/sales/:id` | Detail penjualan |
+| `/profile` | Profile dan ganti password |
+| `/settings` | Pengaturan admin |
+
+## API Utama
+
+Semua endpoint API di bawah ini membutuhkan session admin, kecuali login dan logout.
+
+| Method | Endpoint | Keterangan |
+| --- | --- | --- |
+| `POST` | `/api/auth/login` | Login admin |
+| `POST` | `/api/auth/logout` | Logout admin |
+| `GET` | `/api/auth/me` | Data admin yang sedang login |
+| `PATCH` | `/api/auth/profile/password` | Ganti password |
+| `GET` | `/api/admins` | Daftar admin |
+| `DELETE` | `/api/admins/:id` | Cabut akses admin |
+| `GET` | `/api/users` | Daftar user |
+| `POST` | `/api/users` | Tambah user |
+| `POST` | `/api/users/:id/promote-admin` | Promosikan user menjadi admin |
+| `DELETE` | `/api/users/:id` | Hapus user |
+| `GET` | `/api/products` | Daftar product |
+| `GET` | `/api/products/:id` | Detail product |
+| `POST` | `/api/products` | Tambah product |
+| `PUT` | `/api/products/:id` | Update product |
+| `DELETE` | `/api/products/:id` | Hapus product |
+| `GET` | `/api/categories` | Daftar kategori |
+| `POST` | `/api/categories` | Tambah kategori |
+| `DELETE` | `/api/categories/:id` | Hapus kategori |
+| `GET` | `/api/discounts` | Daftar diskon |
+| `POST` | `/api/discounts` | Tambah diskon |
+| `DELETE` | `/api/discounts/:id` | Hapus diskon |
+| `GET` | `/api/sales` | Daftar transaksi |
+| `GET` | `/api/sales/:id` | Detail transaksi |
+| `POST` | `/api/sales` | Buat transaksi POS |
+
+## Catatan Development
+
+- Project belum memiliki script test otomatis.
+- Database SQLite dibuat dan dimigrasikan secara ringan saat aplikasi start.
+- `data/app.sqlite-wal` dan `data/app.sqlite-shm` adalah file pendamping SQLite WAL.
+- Jangan hapus folder `public/uploads/products` jika masih membutuhkan foto product yang sudah diupload.
 
 ## License
 
-This project is licensed under the MIT License.
-
----
-
-## Author
-
-Made with ❤️ by Mohammad Zainul Irfan
-
-GitHub:
-https://github.com/mzainulirfan
+ISC
