@@ -1,0 +1,86 @@
+<section class="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[1fr_320px]">
+  <div class="app-card p-6">
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold">Data pribadi user</h2>
+      <p class="text-sm text-slate-600">Pastikan email unik dan nomor telepon hanya berisi angka.</p>
+    </div>
+
+    <form id="userForm" class="space-y-5" novalidate>
+      <div>
+        <label for="fullName" class="app-label">
+          <i class="bx bx-user text-base text-slate-500" aria-hidden="true"></i>
+          Nama Lengkap
+        </label>
+        <input id="fullName" name="fullName" type="text" class="app-input" placeholder="Contoh: Zara Naila Hafiza" />
+        <p class="mt-1 hidden text-sm text-red-600" data-error="fullName"></p>
+      </div>
+
+      <div>
+        <label for="email" class="app-label">
+          <i class="bx bx-envelope text-base text-slate-500" aria-hidden="true"></i>
+          Email
+        </label>
+        <input id="email" name="email" type="email" class="app-input" placeholder="nama@email.com" />
+        <p class="mt-1 hidden text-sm text-red-600" data-error="email"></p>
+      </div>
+
+      <div>
+        <label for="phone" class="app-label">
+          <i class="bx bx-phone text-base text-slate-500" aria-hidden="true"></i>
+          Nomor Telepon
+        </label>
+        <input id="phone" name="phone" type="text" inputmode="numeric" class="app-input" placeholder="081234567890" />
+        <p class="mt-1 hidden text-sm text-red-600" data-error="phone"></p>
+      </div>
+
+      <div>
+        <label for="address" class="app-label">
+          <i class="bx bx-map text-base text-slate-500" aria-hidden="true"></i>
+          Alamat
+        </label>
+        <textarea id="address" name="address" rows="3" class="app-input resize-none"
+          placeholder="Masukkan alamat lengkap"></textarea>
+        <p class="mt-1 hidden text-sm text-red-600" data-error="address"></p>
+      </div>
+
+      <div>
+        <label for="birthDate" class="app-label">
+          <i class="bx bx-calendar text-base text-slate-500" aria-hidden="true"></i>
+          Tanggal Lahir
+        </label>
+        <input id="birthDate" name="birthDate" type="date" class="app-input" />
+        <p class="mt-1 hidden text-sm text-red-600" data-error="birthDate"></p>
+      </div>
+
+      <div class="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center">
+        <button id="submitButton" type="submit" class="app-button-primary">
+          <i class="bx bx-save text-lg" aria-hidden="true"></i>
+          <span>Simpan Data</span>
+        </button>
+      </div>
+
+      <p id="message" class="text-sm font-medium"></p>
+    </form>
+  </div>
+
+  <aside class="app-card h-fit p-6">
+    <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+      <i class="bx bx-check-shield text-2xl" aria-hidden="true"></i>
+    </div>
+    <h2 class="text-lg font-semibold">Aturan penyimpanan</h2>
+    <ul class="mt-4 space-y-3 text-sm text-slate-600">
+      <li class="flex gap-2">
+        <i class="bx bx-check text-lg text-emerald-600" aria-hidden="true"></i>
+        Semua field wajib diisi.
+      </li>
+      <li class="flex gap-2">
+        <i class="bx bx-check text-lg text-emerald-600" aria-hidden="true"></i>
+        Email tidak boleh duplikat.
+      </li>
+      <li class="flex gap-2">
+        <i class="bx bx-check text-lg text-emerald-600" aria-hidden="true"></i>
+        Nomor telepon hanya angka.
+      </li>
+    </ul>
+  </aside>
+</section>

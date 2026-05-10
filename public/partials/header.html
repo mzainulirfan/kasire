@@ -1,0 +1,32 @@
+<header class="sticky top-0 z-10 border-b border-slate-200 bg-white/90 px-4 py-4 backdrop-blur sm:px-6">
+  <div class="flex w-full items-center justify-between gap-4">
+    <div>
+      <h1 id="pageTitle" class="text-xl font-semibold tracking-tight">Aplikasi Data User</h1>
+      <p id="pageDescription" class="text-sm text-slate-600">Kelola data user dengan form dan dashboard.</p>
+    </div>
+
+    <div class="profile-menu-wrap">
+      <button id="profileMenuButton" type="button" class="profile-menu-button" aria-expanded="false" aria-haspopup="true">
+        <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-blue-700">
+          <i class="bx bx-user text-xl" aria-hidden="true"></i>
+        </span>
+        <span class="hidden text-left text-sm sm:block">
+          <span id="headerUserName" class="block font-medium">Admin User</span>
+          <span id="headerUserEmail" class="block text-xs text-slate-500">admin@example.com</span>
+        </span>
+        <i class="bx bx-chevron-down text-xl text-slate-500" aria-hidden="true"></i>
+      </button>
+
+      <div id="profileMenuPopup" class="profile-menu-popup hidden">
+        <a href="/profile" class="profile-menu-item">
+          <i class="bx bx-lock-alt text-lg" aria-hidden="true"></i>
+          Edit Profile
+        </a>
+        <button id="logoutButton" type="button" class="profile-menu-item profile-menu-item-danger">
+          <i class="bx bx-log-out text-lg" aria-hidden="true"></i>
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</header>

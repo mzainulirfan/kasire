@@ -1,0 +1,95 @@
+<section class="mx-auto max-w-3xl">
+  <section class="app-card p-5">
+    <div class="mb-5 flex flex-col gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900">Tambah Product</h2>
+        <p class="text-sm text-slate-500">Simpan product baru ke database SQLite.</p>
+      </div>
+      <a href="/products" class="app-button-secondary">
+        <i class="bx bx-left-arrow-alt text-lg" aria-hidden="true"></i>
+        Kembali
+      </a>
+    </div>
+
+    <div id="productFormMessage" class="alert hidden"></div>
+
+    <form id="productForm" class="grid gap-5">
+      <div>
+        <label class="app-label" for="name">
+          <i class="bx bx-box text-base text-slate-400" aria-hidden="true"></i>
+          Nama Product
+        </label>
+        <input id="name" name="name" class="app-input" type="text" autocomplete="off" />
+        <p data-error="name" class="mt-1 hidden text-sm text-red-600"></p>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label class="app-label" for="sku">
+            <i class="bx bx-barcode text-base text-slate-400" aria-hidden="true"></i>
+            SKU
+          </label>
+          <input id="sku" name="sku" class="app-input" type="text" autocomplete="off" />
+          <p data-error="sku" class="mt-1 hidden text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label class="app-label" for="category">
+            <i class="bx bx-category text-base text-slate-400" aria-hidden="true"></i>
+            Kategori
+          </label>
+          <select id="category" name="category" class="app-input">
+            <option value="">Pilih kategori</option>
+          </select>
+          <p data-error="category" class="mt-1 hidden text-sm text-red-600"></p>
+        </div>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label class="app-label" for="price">
+            <i class="bx bx-purchase-tag text-base text-slate-400" aria-hidden="true"></i>
+            Harga
+          </label>
+          <input id="price" name="price" class="app-input" type="number" min="0" step="1" />
+          <p data-error="price" class="mt-1 hidden text-sm text-red-600"></p>
+        </div>
+
+        <div>
+          <label class="app-label" for="stock">
+            <i class="bx bx-package text-base text-slate-400" aria-hidden="true"></i>
+            Stok
+          </label>
+          <input id="stock" name="stock" class="app-input" type="number" min="0" step="1" />
+          <p data-error="stock" class="mt-1 hidden text-sm text-red-600"></p>
+        </div>
+      </div>
+
+      <div>
+        <label class="app-label" for="productImages">
+          <i class="bx bx-images text-base text-slate-400" aria-hidden="true"></i>
+          Foto Product
+        </label>
+        <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+          <input id="productImages" name="images" class="sr-only" type="file" accept="image/*" multiple />
+          <label id="productImageUploadLabel" for="productImages" class="flex cursor-pointer flex-col items-center justify-center rounded-lg bg-white px-4 py-6 text-center">
+            <i class="bx bx-cloud-upload text-4xl text-emerald-600" aria-hidden="true"></i>
+            <span class="mt-2 text-sm font-bold text-slate-900">Pilih foto product</span>
+            <span class="mt-1 text-xs text-slate-500">Maksimal 4 foto. Pilih salah satu sebagai foto utama.</span>
+          </label>
+          <div id="productImagePreview" class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4"></div>
+          <input id="productImageReplaceInput" class="sr-only" type="file" accept="image/*" />
+        </div>
+        <p data-error="images" class="mt-1 hidden text-sm text-red-600"></p>
+      </div>
+
+      <div class="flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
+        <a href="/products" class="app-button-secondary">Batal</a>
+        <button id="productSubmitButton" type="submit" class="app-button-primary">
+          <i class="bx bx-save text-lg" aria-hidden="true"></i>
+          <span>Simpan Product</span>
+        </button>
+      </div>
+    </form>
+  </section>
+</section>

@@ -1,0 +1,80 @@
+<section class="space-y-6">
+  <div class="grid gap-4 sm:grid-cols-3">
+    <article class="stat-card">
+      <p class="text-sm font-medium text-slate-500">Total Product</p>
+      <p id="totalProducts" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+    </article>
+    <article class="stat-card">
+      <p class="text-sm font-medium text-slate-500">Stok Tersedia</p>
+      <p id="availableStock" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+    </article>
+    <article class="stat-card">
+      <p class="text-sm font-medium text-slate-500">Kategori</p>
+      <p id="totalCategories" class="mt-2 text-3xl font-bold tracking-tight text-slate-900">0</p>
+    </article>
+  </div>
+
+  <div id="productMessage" class="alert hidden"></div>
+
+  <section class="app-card overflow-hidden">
+    <div class="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="text-lg font-bold text-slate-900">Data Product</h2>
+        <p class="text-sm text-slate-500">Data diambil dari SQLite.</p>
+      </div>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="relative w-full sm:w-72">
+          <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400" aria-hidden="true"></i>
+          <input id="productSearch" class="app-input app-input-with-icon" type="search" placeholder="Cari product..." />
+        </div>
+        <a href="/products/new" class="app-button-primary">
+          <i class="bx bx-plus text-lg" aria-hidden="true"></i>
+          Tambah Product
+        </a>
+      </div>
+    </div>
+
+    <div id="productTableWrapper" class="overflow-x-auto">
+      <table class="w-full min-w-[760px] text-left">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-4 py-3 font-bold">Product</th>
+            <th class="px-4 py-3 font-bold">SKU</th>
+            <th class="px-4 py-3 font-bold">Kategori</th>
+            <th class="px-4 py-3 font-bold">Harga</th>
+            <th class="px-4 py-3 font-bold">Stok</th>
+            <th class="px-4 py-3 font-bold">Status</th>
+            <th class="px-4 py-3 text-right font-bold">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="productTable" class="divide-y divide-slate-100"></tbody>
+      </table>
+    </div>
+
+    <div id="productEmptyState" class="hidden p-8 text-center">
+      <i class="bx bx-package text-4xl text-slate-300" aria-hidden="true"></i>
+      <p class="mt-2 text-sm font-medium text-slate-600">Belum ada data product.</p>
+    </div>
+  </section>
+
+  <div id="deleteProductModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deleteProductTitle">
+    <section class="modal-panel">
+      <div class="flex items-start gap-3">
+        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <i class="bx bx-trash text-xl" aria-hidden="true"></i>
+        </span>
+        <div>
+          <h3 id="deleteProductTitle" class="text-base font-bold text-slate-900">Hapus product?</h3>
+          <p id="deleteProductText" class="mt-1 text-sm text-slate-600">Product yang dihapus tidak bisa dikembalikan.</p>
+        </div>
+      </div>
+      <div class="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button id="cancelDeleteProductButton" type="button" class="app-button-secondary">Batal</button>
+        <button id="confirmDeleteProductButton" type="button" class="delete-button">
+          <i class="bx bx-trash text-base" aria-hidden="true"></i>
+          <span>Hapus Product</span>
+        </button>
+      </div>
+    </section>
+  </div>
+</section>

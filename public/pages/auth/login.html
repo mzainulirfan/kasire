@@ -1,0 +1,38 @@
+<section class="mx-auto flex min-h-[calc(100vh-3rem)] max-w-md items-center">
+  <div class="app-card w-full p-6">
+    <div class="mb-6">
+      <span class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white">
+        <i class="bx bx-lock-alt text-2xl" aria-hidden="true"></i>
+      </span>
+      <h1 class="text-xl font-semibold tracking-tight">Login</h1>
+      <p class="mt-1 text-sm text-slate-600">Masuk untuk mengelola data user.</p>
+    </div>
+
+    <form id="loginForm" class="space-y-5" novalidate>
+      <div>
+        <label for="loginEmail" class="app-label">
+          <i class="bx bx-envelope text-base text-slate-500" aria-hidden="true"></i>
+          Email
+        </label>
+        <input id="loginEmail" name="email" type="email" class="app-input" placeholder="admin@example.com" autocomplete="email" />
+        <p class="mt-1 hidden text-sm text-red-600" data-login-error="email"></p>
+      </div>
+
+      <div>
+        <label for="loginPassword" class="app-label">
+          <i class="bx bx-lock-alt text-base text-slate-500" aria-hidden="true"></i>
+          Password
+        </label>
+        <input id="loginPassword" name="password" type="password" class="app-input" placeholder="Masukkan password" autocomplete="current-password" />
+        <p class="mt-1 hidden text-sm text-red-600" data-login-error="password"></p>
+      </div>
+
+      <button id="loginButton" type="submit" class="app-button-primary w-full">
+        <i class="bx bx-log-in text-lg" aria-hidden="true"></i>
+        <span>Login</span>
+      </button>
+
+      <div id="loginMessage" class="alert hidden"></div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,96 @@
+<section class="mx-auto max-w-5xl space-y-6">
+  <div class="app-card p-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+          <i class="bx bx-shield-quarter text-2xl" aria-hidden="true"></i>
+        </span>
+        <div>
+          <h2 class="text-lg font-semibold">Setting Admin</h2>
+          <p class="text-sm text-slate-600">Kelola akun yang bisa login dan mengakses aplikasi.</p>
+        </div>
+      </div>
+
+      <button id="openPromoteUserModalButton" type="button" class="app-button-primary">
+        <i class="bx bx-user-plus text-lg" aria-hidden="true"></i>
+        Tambah dari User
+      </button>
+    </div>
+
+    <div class="mt-6 grid gap-4 sm:grid-cols-2">
+      <article class="rounded-xl border border-slate-200 p-4">
+        <p class="flex items-center gap-2 text-sm font-semibold text-slate-900">
+          <i class="bx bx-lock-alt text-lg text-blue-600" aria-hidden="true"></i>
+          Password Awal
+        </p>
+        <p class="mt-2 text-sm text-slate-600">Admin hasil promosi user memakai password awal <span class="font-semibold">user12345</span>.</p>
+      </article>
+
+      <article class="rounded-xl border border-slate-200 p-4">
+        <p class="flex items-center gap-2 text-sm font-semibold text-slate-900">
+          <i class="bx bx-error-circle text-lg text-blue-600" aria-hidden="true"></i>
+          Aturan Cabut Admin
+        </p>
+        <p class="mt-2 text-sm text-slate-600">Admin yang sedang login dan admin terakhir tidak bisa dicabut.</p>
+      </article>
+    </div>
+  </div>
+
+  <section class="app-card p-5">
+    <div class="mb-5">
+      <h2 class="flex items-center gap-2 text-lg font-semibold">
+        <i class="bx bx-user-check text-xl text-blue-600" aria-hidden="true"></i>
+        Daftar Admin
+      </h2>
+      <p class="text-sm text-slate-600">Cabut akses admin jika user tidak lagi boleh login ke aplikasi.</p>
+    </div>
+
+    <div id="settingsMessage" class="alert hidden"></div>
+
+    <div id="adminTableWrapper" class="overflow-x-auto rounded-xl border border-slate-200">
+      <table class="w-full min-w-[680px] border-collapse text-left text-sm">
+        <thead class="bg-slate-50">
+          <tr class="border-b border-slate-200 text-slate-600">
+            <th class="px-4 py-3 font-semibold">Admin</th>
+            <th class="px-4 py-3 font-semibold">Email</th>
+            <th class="px-4 py-3 font-semibold">Role</th>
+            <th class="px-4 py-3 font-semibold">Dibuat</th>
+            <th class="px-4 py-3 text-right font-semibold">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="adminTable"></tbody>
+      </table>
+    </div>
+
+    <div id="adminEmptyState" class="hidden rounded-xl border border-dashed border-slate-300 py-10 text-center">
+      <i class="bx bx-user-x text-4xl text-slate-400" aria-hidden="true"></i>
+      <p class="mt-2 text-sm font-medium text-slate-700">Belum ada data admin.</p>
+    </div>
+  </section>
+
+  <div id="promoteUserModal" class="modal-backdrop hidden">
+    <section class="modal-panel modal-panel-wide" role="dialog" aria-modal="true" aria-labelledby="promoteUserModalTitle">
+      <div class="mb-4 flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-700">
+            <i class="bx bx-user-plus text-2xl" aria-hidden="true"></i>
+          </span>
+          <div>
+            <h2 id="promoteUserModalTitle" class="text-lg font-semibold text-slate-900">Tambah Admin dari User</h2>
+            <p class="mt-1 text-sm text-slate-600">Pilih user yang ingin diberikan akses admin.</p>
+          </div>
+        </div>
+        <button id="closePromoteUserModalButton" type="button" class="app-button-secondary px-3 py-2" title="Tutup">
+          <i class="bx bx-x text-xl" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div id="promoteUserList" class="max-h-[420px] space-y-3 overflow-y-auto"></div>
+
+      <div id="promoteUserEmptyState" class="hidden rounded-xl border border-dashed border-slate-300 py-8 text-center">
+        <i class="bx bx-user-check text-4xl text-slate-400" aria-hidden="true"></i>
+        <p class="mt-2 text-sm font-medium text-slate-700">Semua user sudah menjadi admin.</p>
+      </div>
+    </section>
+  </div>
+</section>

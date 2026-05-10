@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1777790629120,
+    "name": "raffa zain",
+    "email": "raffa@maill.com",
+    "passwordHash": "$2b$10$vMRt.HgkXh0L57D8XB4pkOYYpsGMNoGMfrX3x3f53NDf6RwOYdGrq",
+    "role": "admin",
+    "createdAt": "2026-05-03T06:43:49.120Z",
+    "updatedAt": "2026-05-03T06:43:49.120Z"
+  },
+  {
+    "id": 1777792470073,
+    "name": "nena fatimah",
+    "email": "nenafatimah@gmail.com",
+    "passwordHash": "$2b$10$rHqr1k2oV5x7NBpwHWEdLOxTzEDuaQPY19B2DXZ6X56BIofLyfl7y",
+    "role": "admin",
+    "createdAt": "2026-05-03T07:14:30.073Z",
+    "updatedAt": "2026-05-03T07:14:30.073Z"
+  }
+]

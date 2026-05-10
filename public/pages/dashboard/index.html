@@ -1,0 +1,184 @@
+<section class=" mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+  <article class="stat-card">
+    <p class="flex items-center gap-1.5 text-sm text-slate-600">
+      <i class="bx bx-group text-lg text-blue-600" aria-hidden="true"></i>
+      Total User
+    </p>
+    <p id="totalUsers" class="mt-2 text-3xl font-semibold">0</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="flex items-center gap-1.5 text-sm text-slate-600">
+      <i class="bx bx-box text-lg text-emerald-600" aria-hidden="true"></i>
+      Total Product
+    </p>
+    <p id="totalProducts" class="mt-2 text-3xl font-semibold">0</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="flex items-center gap-1.5 text-sm text-slate-600">
+      <i class="bx bx-package text-lg text-emerald-600" aria-hidden="true"></i>
+      Stok Product
+    </p>
+    <p id="totalProductStock" class="mt-2 text-3xl font-semibold">0</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="flex items-center gap-1.5 text-sm text-slate-600">
+      <i class="bx bx-category text-lg text-emerald-600" aria-hidden="true"></i>
+      Kategori Product
+    </p>
+    <p id="totalProductCategories" class="mt-2 text-3xl font-semibold">0</p>
+  </article>
+
+  <article class="stat-card">
+    <p class="flex items-center gap-1.5 text-sm text-slate-600">
+      <i class="bx bx-wallet text-lg text-blue-600" aria-hidden="true"></i>
+      Income
+    </p>
+    <p id="totalIncome" class="mt-2 text-2xl font-semibold">Rp0</p>
+  </article>
+</section>
+
+<section class="grid gap-6 2xl:grid-cols-[minmax(0,1.45fr)_minmax(420px,0.55fr)]">
+  <section class="app-card p-5">
+    <div class="mb-5 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div>
+        <h2 class="flex items-center gap-2 text-lg font-semibold">
+          <i class="bx bx-table text-xl text-blue-600" aria-hidden="true"></i>
+          Daftar User
+        </h2>
+        <p class="text-sm text-slate-600">Gunakan pencarian untuk menemukan user berdasarkan nama, email, telepon,
+          atau
+          alamat.</p>
+      </div>
+
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <label id="searchControl" class="relative block min-w-0 sm:w-72">
+          <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400"
+            aria-hidden="true"></i>
+          <input id="userSearch" type="search" class="app-input app-input-with-icon" placeholder="Cari user..." />
+        </label>
+        <a id="addDataControl" href="/users" class="app-button-primary hidden">
+          <i class="bx bx-plus text-lg" aria-hidden="true"></i>
+          Tambah Data
+        </a>
+      </div>
+    </div>
+
+    <div id="dashboardMessage" class="alert hidden"></div>
+
+    <div id="tableWrapper" class="overflow-x-auto rounded-xl border border-slate-200">
+      <table class="w-full min-w-[960px] border-collapse text-left text-sm">
+        <thead class="bg-slate-50">
+          <tr class="border-b border-slate-200 text-slate-600">
+            <th class="px-4 py-3 font-semibold">User</th>
+            <th class="px-4 py-3 font-semibold">Kontak</th>
+            <th class="px-4 py-3 font-semibold">Alamat</th>
+            <th class="px-4 py-3 font-semibold">Terdaftar</th>
+            <th class="px-4 py-3 text-right font-semibold">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+      </table>
+    </div>
+
+    <div id="emptyState" class="hidden rounded-xl border border-dashed border-slate-300 py-10 text-center">
+      <i class="bx bx-data text-4xl text-slate-400" aria-hidden="true"></i>
+      <p class="mt-2 text-sm font-medium text-slate-700">Belum ada data user.</p>
+      <p class="text-sm text-slate-500">Data yang berhasil disimpan akan muncul di sini.</p>
+    </div>
+  </section>
+
+  <div class="space-y-6">
+    <section class="app-card p-5">
+      <div class="mb-5 flex items-start justify-between gap-3">
+        <div>
+          <h2 class="flex items-center gap-2 text-lg font-semibold">
+            <i class="bx bx-receipt text-xl text-blue-600" aria-hidden="true"></i>
+            Daftar Transaksi
+          </h2>
+          <p class="text-sm text-slate-600">Menampilkan transaksi terakhir dari POS.</p>
+        </div>
+        <a href="/sales" class="app-button-secondary shrink-0">
+          <i class="bx bx-right-arrow-alt text-lg" aria-hidden="true"></i>
+          Lihat
+        </a>
+      </div>
+
+      <div id="latestSalesTableWrapper" class="rounded-xl border border-slate-200">
+        <table class="w-full table-fixed border-collapse text-left text-sm">
+          <thead class="bg-slate-50">
+            <tr class="border-b border-slate-200 text-slate-600">
+              <th class="w-[46%] px-4 py-3 font-semibold">Invoice</th>
+              <th class="w-[30%] px-4 py-3 font-semibold">Customer</th>
+              <th class="w-[24%] px-4 py-3 font-semibold">Total</th>
+            </tr>
+          </thead>
+          <tbody id="latestSalesTable"></tbody>
+        </table>
+      </div>
+
+      <div id="latestSalesEmptyState" class="hidden rounded-xl border border-dashed border-slate-300 py-10 text-center">
+        <i class="bx bx-receipt text-4xl text-slate-400" aria-hidden="true"></i>
+        <p class="mt-2 text-sm font-medium text-slate-700">Belum ada transaksi.</p>
+      </div>
+    </section>
+
+    <section class="app-card p-5">
+      <div class="mb-5 flex items-start justify-between gap-3">
+        <div>
+          <h2 class="flex items-center gap-2 text-lg font-semibold">
+            <i class="bx bx-box text-xl text-emerald-600" aria-hidden="true"></i>
+            Product Terbaru
+          </h2>
+          <p class="text-sm text-slate-600">Menampilkan product terakhir yang tersimpan.</p>
+        </div>
+        <a href="/products" class="app-button-secondary shrink-0">
+          <i class="bx bx-right-arrow-alt text-lg" aria-hidden="true"></i>
+          Lihat
+        </a>
+      </div>
+
+      <div id="latestProductTableWrapper" class="rounded-xl border border-slate-200">
+        <table class="w-full table-fixed border-collapse text-left text-sm">
+          <thead class="bg-slate-50">
+            <tr class="border-b border-slate-200 text-slate-600">
+              <th class="w-[52%] px-4 py-3 font-semibold">Product</th>
+              <th class="w-[30%] px-4 py-3 font-semibold">Harga</th>
+              <th class="w-[18%] px-4 py-3 font-semibold">Stok</th>
+            </tr>
+          </thead>
+          <tbody id="latestProductTable"></tbody>
+        </table>
+      </div>
+
+      <div id="latestProductEmptyState" class="hidden rounded-xl border border-dashed border-slate-300 py-10 text-center">
+        <i class="bx bx-package text-4xl text-slate-400" aria-hidden="true"></i>
+        <p class="mt-2 text-sm font-medium text-slate-700">Belum ada data product.</p>
+      </div>
+    </section>
+  </div>
+</section>
+
+<div id="deleteModal" class="modal-backdrop hidden">
+  <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="mb-4 flex items-start gap-3">
+      <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
+        <i class="bx bx-trash text-2xl" aria-hidden="true"></i>
+      </span>
+      <div>
+        <h2 id="deleteModalTitle" class="text-lg font-semibold text-slate-900">Hapus data user?</h2>
+        <p id="deleteModalText" class="mt-1 text-sm text-slate-600">Data yang dihapus tidak dapat dikembalikan.</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <button id="cancelDeleteButton" type="button" class="app-button-secondary">Batal</button>
+      <button id="confirmDeleteButton" type="button" class="delete-button">
+        <i class="bx bx-trash text-base" aria-hidden="true"></i>
+        <span>Hapus Data</span>
+      </button>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,105 @@
+<section class="space-y-6">
+  <div id="discountMessage" class="alert hidden"></div>
+
+  <section class="grid gap-6 lg:grid-cols-[minmax(0,420px)_1fr]">
+    <section class="app-card p-5">
+      <div class="mb-5 border-b border-slate-200 pb-4">
+        <h2 class="text-lg font-bold text-slate-900">Tambah Discount</h2>
+        <p class="text-sm text-slate-500">Diskon ini akan muncul di pilihan POS.</p>
+      </div>
+
+      <form id="discountForm" class="space-y-4">
+        <div>
+          <label class="app-label" for="discountName">
+            <i class="bx bx-purchase-tag text-base text-slate-400" aria-hidden="true"></i>
+            Nama Discount
+          </label>
+          <input id="discountName" name="name" class="app-input" type="text" autocomplete="off" />
+          <p data-discount-error="name" class="mt-1 hidden text-sm text-red-600"></p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="app-label" for="discountType">
+              <i class="bx bx-transfer text-base text-slate-400" aria-hidden="true"></i>
+              Tipe
+            </label>
+            <select id="discountType" name="type" class="app-input">
+              <option value="amount">Nominal</option>
+              <option value="percent">Persen</option>
+            </select>
+            <p data-discount-error="type" class="mt-1 hidden text-sm text-red-600"></p>
+          </div>
+
+          <div>
+            <label class="app-label" for="discountValue">
+              <i class="bx bx-hash text-base text-slate-400" aria-hidden="true"></i>
+              Nilai
+            </label>
+            <input id="discountValue" name="value" class="app-input" type="number" min="0" step="1" value="0" />
+            <p data-discount-error="value" class="mt-1 hidden text-sm text-red-600"></p>
+          </div>
+        </div>
+
+        <button id="discountSubmitButton" type="submit" class="app-button-primary">
+          <i class="bx bx-save text-lg" aria-hidden="true"></i>
+          <span>Simpan Discount</span>
+        </button>
+      </form>
+    </section>
+
+    <section class="app-card overflow-hidden">
+      <div class="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">Data Discount</h2>
+          <p class="text-sm text-slate-500">Hapus discount jika tidak lagi dipakai.</p>
+        </div>
+        <div class="relative w-full sm:w-72">
+          <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400" aria-hidden="true"></i>
+          <input id="discountSearch" class="app-input app-input-with-icon" type="search" placeholder="Cari discount..." />
+        </div>
+      </div>
+
+      <div id="discountTableWrapper" class="overflow-x-auto">
+        <table class="w-full min-w-[620px] text-left">
+          <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+            <tr>
+              <th class="px-4 py-3 font-bold">Discount</th>
+              <th class="px-4 py-3 font-bold">Tipe</th>
+              <th class="px-4 py-3 font-bold">Nilai</th>
+              <th class="px-4 py-3 font-bold">Dibuat</th>
+              <th class="px-4 py-3 text-right font-bold">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="discountTable" class="divide-y divide-slate-100"></tbody>
+        </table>
+      </div>
+
+      <div id="discountEmptyState" class="hidden p-8 text-center">
+        <i class="bx bx-purchase-tag text-4xl text-slate-300" aria-hidden="true"></i>
+        <p class="mt-2 text-sm font-medium text-slate-600">Belum ada discount.</p>
+      </div>
+    </section>
+  </section>
+
+  <div id="deleteDiscountModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deleteDiscountTitle">
+    <section class="modal-panel">
+      <div class="flex items-start gap-3">
+        <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <i class="bx bx-trash text-xl" aria-hidden="true"></i>
+        </span>
+        <div>
+          <h3 id="deleteDiscountTitle" class="text-base font-bold text-slate-900">Hapus discount?</h3>
+          <p id="deleteDiscountText" class="mt-1 text-sm text-slate-600">Discount yang dihapus tidak bisa dikembalikan.</p>
+        </div>
+      </div>
+      <div class="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button id="cancelDeleteDiscountButton" type="button" class="app-button-secondary">Batal</button>
+        <button id="confirmDeleteDiscountButton" type="button" class="delete-button">
+          <i class="bx bx-trash text-base" aria-hidden="true"></i>
+          <span>Hapus Discount</span>
+        </button>
+      </div>
+    </section>
+  </div>
+</section>
