@@ -4,6 +4,7 @@ function initDashboardPage() {
   const totalProductStock = document.getElementById("totalProductStock");
   const totalProductCategories = document.getElementById("totalProductCategories");
   const totalIncome = document.getElementById("totalIncome");
+  const totalSales = document.getElementById("totalSales");
   const latestUser = document.getElementById("latestUser");
   const latestSavedAt = document.getElementById("latestSavedAt");
   const userTable = document.getElementById("userTable");
@@ -262,8 +263,8 @@ function initDashboardPage() {
         const row = document.createElement("tr");
         row.className = "transition hover:bg-slate-50";
         row.appendChild(createProductCell(product));
-        row.appendChild(createTableCell(formatCurrency(product.price)));
-        row.appendChild(createTableCell(String(product.stock)));
+        row.appendChild(createTableCell(formatCurrency(product.price), "text-right tabular-nums"));
+        row.appendChild(createTableCell(String(product.stock), "text-right tabular-nums"));
         latestProductTable.appendChild(row);
       });
   }
@@ -312,7 +313,7 @@ function initDashboardPage() {
         row.className = "transition hover:bg-slate-50";
         row.appendChild(createSaleInvoiceCell(sale));
         row.appendChild(createTableCell(sale.customerName, "truncate"));
-        row.appendChild(createTableCell(formatCurrency(sale.total)));
+        row.appendChild(createTableCell(formatCurrency(sale.total), "text-right tabular-nums"));
         latestSalesTable.appendChild(row);
       });
   }
@@ -323,6 +324,9 @@ function initDashboardPage() {
     totalProductStock.textContent = allProducts.reduce((total, product) => total + product.stock, 0);
     totalProductCategories.textContent = new Set(allProducts.map((product) => product.category)).size;
     totalIncome.textContent = formatCurrency(allSales.reduce((total, sale) => total + sale.total, 0));
+    if (totalSales) {
+      totalSales.textContent = allSales.length;
+    }
     userTable.replaceChildren();
     renderLatestProducts();
     renderLatestSales();
@@ -366,7 +370,6 @@ function initDashboardPage() {
       row.className = "transition hover:bg-slate-50";
       row.appendChild(createUserCell(user));
       row.appendChild(createContactCell(user));
-      row.appendChild(createAddressCell(user));
       row.appendChild(createCreatedAtCell(user));
       row.appendChild(createActionCell(user));
       userTable.appendChild(row);
@@ -450,6 +453,9 @@ function initDashboardPage() {
       totalProductStock.textContent = "0";
       totalProductCategories.textContent = "0";
       totalIncome.textContent = formatCurrency(0);
+      if (totalSales) {
+        totalSales.textContent = "0";
+      }
       latestProductTable.replaceChildren();
       latestProductTableWrapper.classList.add("hidden");
       latestProductEmptyState.classList.remove("hidden");

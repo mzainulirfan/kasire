@@ -4,6 +4,11 @@ function initSalesPage() {
   const table = document.getElementById("salesTable");
   const tableWrapper = document.getElementById("salesTableWrapper");
   const emptyState = document.getElementById("salesEmptyState");
+  const totalCountText = document.getElementById("salesTotalCount");
+  const totalAmountText = document.getElementById("salesTotalAmount");
+  const latestDateText = document.getElementById("salesLatestDate");
+  const paymentSummaryText = document.getElementById("salesPaymentSummary");
+  const resultCountText = document.getElementById("salesResultCount");
   let sales = [];
 
   function formatCurrency(value) {
@@ -40,8 +45,53 @@ function initSalesPage() {
     return cell;
   }
 
+  function formatPaymentMethod(method) {
+    return String(method || "-").toUpperCase();
+  }
+
+  function updateSummary(items) {
+    const totalAmount = items.reduce((total, sale) => total + Number(sale.total || 0), 0);
+    const latestSale = items
+      .slice()
+      .sort((first, second) => new Date(second.createdAt) - new Date(first.createdAt))[0];
+    const cashCount = items.filter((sale) => sale.paymentMethod === "cash").length;
+    const nonCashCount = items.length - cashCount;
+
+    if (totalCountText) {
+      totalCountText.textContent = String(items.length);
+    }
+
+    if (totalAmountText) {
+      totalAmountText.textContent = formatCurrency(totalAmount);
+    }
+
+    if (latestDateText) {
+      latestDateText.textContent = latestSale ? formatDateTime(latestSale.createdAt) : "-";
+    }
+
+    if (paymentSummaryText) {
+      paymentSummaryText.textContent = items.length ? `Cash ${cashCount} | Non-cash ${nonCashCount}` : "-";
+    }
+
+    if (resultCountText) {
+      const keyword = searchInput.value.trim();
+      resultCountText.textContent = keyword ? `${items.length} hasil ditemukan` : `${items.length} transaksi`;
+    }
+  }
+
+  function createPaymentBadge(method) {
+    const badge = document.createElement("span");
+    const normalizedMethod = String(method || "").toLowerCase();
+    badge.className = normalizedMethod === "cash"
+      ? "inline-flex rounded-full bg-emerald-50 px-2 py-1 text-xs font-bold text-emerald-700"
+      : "inline-flex rounded-full bg-blue-50 px-2 py-1 text-xs font-bold text-blue-700";
+    badge.textContent = formatPaymentMethod(method);
+    return badge;
+  }
+
   function renderSales(items) {
     table.replaceChildren();
+    updateSummary(items);
 
     if (!items.length) {
       tableWrapper.classList.add("hidden");
@@ -61,6 +111,10 @@ function initSalesPage() {
       invoiceCell.innerHTML = '<span class="font-bold text-slate-900"></span>';
       invoiceCell.querySelector("span").textContent = sale.invoiceNumber;
 
+      const paymentCell = document.createElement("td");
+      paymentCell.className = "table-cell";
+      paymentCell.appendChild(createPaymentBadge(sale.paymentMethod));
+
       const actionCell = document.createElement("td");
       actionCell.className = "table-cell text-right";
       const link = document.createElement("a");
@@ -72,8 +126,8 @@ function initSalesPage() {
       row.appendChild(invoiceCell);
       row.appendChild(createCell(sale.customerName));
       row.appendChild(createCell(sale.cashierName));
-      row.appendChild(createCell(sale.paymentMethod.toUpperCase()));
-      row.appendChild(createCell(formatCurrency(sale.total)));
+      row.appendChild(paymentCell);
+      row.appendChild(createCell(formatCurrency(sale.total), "text-right font-bold text-slate-900"));
       row.appendChild(createCell(formatDateTime(sale.createdAt)));
       row.appendChild(actionCell);
       table.appendChild(row);
@@ -110,6 +164,7 @@ function initSalesPage() {
       tableWrapper.classList.add("hidden");
       emptyState.classList.remove("hidden");
       emptyState.querySelector("p").textContent = "Gagal memuat transaksi.";
+      updateSummary([]);
       setMessage(error.message);
     }
   }

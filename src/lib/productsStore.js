@@ -125,6 +125,78 @@ function deleteProductById(productId) {
   return product;
 }
 
+function updateProduct(productId, product) {
+  const existingProduct = findProductById(productId);
+
+  if (!existingProduct) {
+    return undefined;
+  }
+
+  const status = product.stock > 0 ? "active" : "out_of_stock";
+  const keptImageIds = new Set((product.keptImageIds || []).map(Number));
+  const keptImages = (existingProduct.images || []).filter((image) => keptImageIds.has(image.id));
+  const createdAt = new Date().toISOString();
+  const database = getDb();
+  const updateProductStatement = database.prepare(`
+    UPDATE products
+    SET name = @name,
+        sku = @sku,
+        category = @category,
+        price = @price,
+        stock = @stock,
+        status = @status
+    WHERE id = @id
+  `);
+  const deleteImages = database.prepare("DELETE FROM product_images WHERE product_id = ?");
+  const insertImage = database.prepare(`
+    INSERT INTO product_images (id, product_id, image_path, image_data, file_name, mime_type, is_primary, created_at)
+    VALUES (@id, @productId, @imagePath, @imageData, @fileName, @mimeType, @isPrimary, @createdAt)
+  `);
+  const images = [
+    ...keptImages.map((image) => ({
+      imagePath: image.imagePath || null,
+      imageData: image.imageData || "",
+      fileName: image.fileName,
+      mimeType: image.mimeType || null,
+      key: `existing:${image.id}`
+    })),
+    ...(product.images || []).map((image, index) => ({
+      imagePath: image.imagePath || null,
+      imageData: image.imageData || "",
+      fileName: image.fileName,
+      mimeType: image.mimeType || null,
+      key: `new:${index}`
+    }))
+  ];
+
+  database.transaction(() => {
+    updateProductStatement.run({
+      id: productId,
+      name: product.name,
+      sku: product.sku,
+      category: product.category,
+      price: product.price,
+      stock: product.stock,
+      status
+    });
+    deleteImages.run(productId);
+    images.forEach((image, index) => {
+      insertImage.run({
+        id: Date.now() + index + 1,
+        productId,
+        imagePath: image.imagePath,
+        imageData: image.imageData,
+        fileName: image.fileName,
+        mimeType: image.mimeType,
+        isPrimary: image.key === product.primaryImageKey ? 1 : 0,
+        createdAt
+      });
+    });
+  })();
+
+  return findProductById(productId);
+}
+
 function updateProductStock(productId, stock) {
   const status = stock > 0 ? "active" : "out_of_stock";
 
@@ -139,6 +211,7 @@ module.exports = {
   findProductBySku,
   findProductById,
   createProduct,
+  updateProduct,
   readProductImages,
   deleteProductById,
   updateProductStock

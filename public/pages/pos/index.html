@@ -1,12 +1,22 @@
 <section class="flex h-screen flex-col overflow-hidden bg-slate-100">
   <header class="flex shrink-0 flex-col gap-3 border-b border-slate-200 bg-white px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
-    <div class="flex items-center gap-3">
-      <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">
-        <i class="bx bx-cart text-2xl" aria-hidden="true"></i>
+    <div class="flex min-w-0 items-center gap-3">
+      <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
+        <i class="bx bx-cart text-xl" aria-hidden="true"></i>
       </span>
-      <div>
-        <h1 class="text-lg font-bold text-slate-900">POS</h1>
-        <p class="text-sm text-slate-500">Point of sale product.</p>
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <h1 class="text-lg font-bold text-slate-900">POS</h1>
+          <span id="posDraftStatus" class="hidden rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-700">Draft tersimpan</span>
+        </div>
+        <div class="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-medium text-slate-500">
+          <p id="posCartSummary">Cart kosong</p>
+          <p class="inline-flex items-center gap-1.5">
+            <i class="bx bx-user-check text-sm text-blue-600" aria-hidden="true"></i>
+            <span>Kasir:</span>
+            <strong id="posCashierName" class="font-semibold text-slate-900">Admin</strong>
+          </p>
+        </div>
       </div>
     </div>
 
@@ -26,18 +36,15 @@
     </nav>
   </header>
 
-  <main class="flex min-h-0 flex-1 flex-col gap-4 p-4">
+  <main class="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-3 xl:overflow-hidden xl:p-4">
     <div id="posMessage" class="alert hidden shrink-0"></div>
 
-    <section class="grid min-h-0 flex-1 gap-4 xl:grid-cols-[minmax(360px,0.95fr)_minmax(0,1.45fr)]">
-      <section class="app-card flex min-h-0 flex-col overflow-hidden">
-        <div class="shrink-0 border-b border-slate-200 p-4">
-          <div class="mb-3 flex items-start justify-between gap-3">
-            <div>
-            <h2 class="text-lg font-bold text-slate-900">Pilih Product</h2>
-              <p class="text-sm text-slate-500">List product compact.</p>
-            </div>
-            <span class="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-500">Product</span>
+    <section class="grid flex-1 gap-3 xl:min-h-0 xl:grid-cols-[minmax(340px,0.95fr)_minmax(360px,1fr)_minmax(320px,0.75fr)] xl:gap-4">
+      <section class="app-card flex min-h-[420px] flex-col overflow-hidden xl:min-h-0">
+        <div class="shrink-0 border-b border-slate-200 p-3">
+          <div class="mb-3 flex items-center justify-between gap-3">
+            <h2 class="text-base font-bold text-slate-900">Produk</h2>
+            <span id="posProductCount" class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-500">0 item</span>
           </div>
           <div class="relative">
             <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400" aria-hidden="true"></i>
@@ -45,124 +52,122 @@
           </div>
         </div>
 
-        <div class="min-h-0 flex-1 overflow-y-auto p-3">
+        <div class="min-h-0 flex-1 overflow-y-auto p-2">
           <div id="posProductGrid" class="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200 bg-white"></div>
         </div>
-        <div id="posProductEmptyState" class="hidden p-8 text-center">
-          <i class="bx bx-package text-4xl text-slate-300" aria-hidden="true"></i>
+        <div id="posProductEmptyState" class="hidden p-6 text-center">
+          <i class="bx bx-package text-3xl text-slate-300" aria-hidden="true"></i>
           <p class="mt-2 text-sm font-medium text-slate-600">Product tidak tersedia.</p>
         </div>
       </section>
 
-      <section class="app-card flex min-h-0 flex-col overflow-hidden">
-        <div class="shrink-0 border-b border-slate-200 px-4 py-3">
-          <h2 class="text-lg font-bold text-slate-900">Cart & Pembayaran</h2>
+      <section class="app-card flex min-h-[420px] flex-col overflow-hidden xl:min-h-0">
+        <div class="shrink-0 border-b border-slate-200 p-3">
+          <div class="flex items-center justify-between gap-3">
+            <h2 class="text-base font-bold text-slate-900">Cart Aktif</h2>
+            <span class="text-xs font-semibold uppercase text-slate-400">Item</span>
+          </div>
         </div>
 
-        <div class="grid min-h-0 flex-1 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <section class="flex min-h-0 flex-col p-4">
-            <div class="shrink-0">
-              <label class="app-label" for="posCustomer">
-                <i class="bx bx-user text-base text-slate-400" aria-hidden="true"></i>
-                Customer
-              </label>
-              <select id="posCustomer" class="app-input">
-                <option value="">Walk-in Customer</option>
-              </select>
-            </div>
+        <div class="flex min-h-0 flex-1 flex-col p-3">
+          <div class="shrink-0">
+            <label class="app-label" for="posCustomer">
+              <i class="bx bx-user text-base text-slate-400" aria-hidden="true"></i>
+              Customer
+            </label>
+            <select id="posCustomer" class="app-input">
+              <option value="">Walk-in Customer</option>
+            </select>
+          </div>
 
-            <div class="mt-4 flex min-h-0 flex-1 flex-col">
-              <div class="mb-2 flex shrink-0 items-center justify-between">
-                <h3 class="font-bold text-slate-900">Product Dipilih</h3>
-                <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">Cart</span>
-              </div>
-              <div id="posCartItems" class="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1"></div>
-              <div id="posCartEmptyState" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm font-medium text-slate-500">
-                Cart masih kosong.
-              </div>
-            </div>
-          </section>
-
-          <section class="flex min-h-0 flex-col border-t border-slate-200 bg-slate-50/60 p-4 lg:border-l lg:border-t-0">
-            <div class="shrink-0 border-b border-slate-200 pb-3">
-              <h3 class="font-bold text-slate-900">Pembayaran</h3>
-            </div>
-
-            <div class="mt-3 flex min-h-0 flex-1 flex-col justify-between gap-3">
-              <div class="space-y-3">
-                <div class="space-y-2">
-                  <div class="flex items-center justify-between text-sm">
-                    <span class="text-slate-500">Subtotal</span>
-                    <span id="posSubtotal" class="font-bold text-slate-900">Rp0</span>
-                  </div>
-                  <div>
-                    <label class="app-label" for="posDiscountId">Diskon</label>
-                    <select id="posDiscountId" class="app-input">
-                      <option value="">Tanpa diskon</option>
-                    </select>
-                    <p id="posDiscountMeta" class="mt-1 text-xs text-slate-500">Pilih diskon preset yang tersedia.</p>
-                  </div>
-                  <div>
-                    <label class="app-label" for="posTax">Pajak</label>
-                    <input id="posTax" class="app-input" type="number" min="0" step="1" value="0" />
-                  </div>
-                  <div class="flex items-center justify-between border-t border-slate-200 pt-3">
-                    <span class="font-bold text-slate-900">Total</span>
-                    <span id="posTotal" class="text-lg font-bold text-slate-900">Rp0</span>
-                  </div>
-                </div>
-
-                <div>
-                  <p class="app-label">Pembayaran</p>
-                  <div id="posPaymentMethod" class="grid grid-cols-2 gap-2">
-                    <label class="payment-method-option">
-                      <input class="peer sr-only" type="radio" name="paymentMethod" value="cash" checked />
-                      <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
-                        <i class="bx bx-money text-lg" aria-hidden="true"></i>
-                        Cash
-                      </span>
-                    </label>
-                    <label class="payment-method-option">
-                      <input class="peer sr-only" type="radio" name="paymentMethod" value="qris" />
-                      <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
-                        <i class="bx bx-qr-scan text-lg" aria-hidden="true"></i>
-                        QRIS
-                      </span>
-                    </label>
-                    <label class="payment-method-option">
-                      <input class="peer sr-only" type="radio" name="paymentMethod" value="transfer" />
-                      <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
-                        <i class="bx bx-transfer-alt text-lg" aria-hidden="true"></i>
-                        Transfer
-                      </span>
-                    </label>
-                    <label class="payment-method-option">
-                      <input class="peer sr-only" type="radio" name="paymentMethod" value="card" />
-                      <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
-                        <i class="bx bx-credit-card text-lg" aria-hidden="true"></i>
-                        Card
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div>
-                  <label class="app-label" for="posPaidAmount">Dibayar</label>
-                  <input id="posPaidAmount" class="app-input" type="number" min="0" step="1" value="0" />
-                </div>
-
-                <div class="flex items-center justify-between rounded-xl bg-white p-3 text-sm">
-                  <span class="font-medium text-slate-500">Kembalian</span>
-                  <span id="posChange" class="font-bold text-slate-900">Rp0</span>
-                </div>
-              </div>
-
-              <button id="posCheckoutButton" type="button" class="app-button-primary w-full">
-                <i class="bx bx-check-circle text-lg" aria-hidden="true"></i>
-                <span>Checkout</span>
-              </button>
+          <div class="mt-3 flex min-h-0 flex-1 flex-col">
+            <div id="posCartItems" class="min-h-0 flex-1 space-y-2 overflow-y-auto pr-1"></div>
+            <div id="posCartEmptyState" class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-5 text-center text-sm font-medium text-slate-500">
+              Cart masih kosong.
             </div>
           </div>
+        </div>
+      </section>
+
+      <section class="app-card flex min-h-[520px] flex-col overflow-hidden bg-white xl:min-h-0">
+        <div class="shrink-0 border-b border-slate-200 p-3">
+          <h2 class="text-base font-bold text-slate-900">Pembayaran</h2>
+        </div>
+
+        <div class="flex min-h-0 flex-1 flex-col justify-between gap-4 overflow-y-auto p-3">
+          <div class="space-y-4">
+            <div class="rounded-xl border border-blue-100 bg-blue-50 p-3">
+              <p class="text-xs font-bold uppercase text-blue-700">Total</p>
+              <p id="posTotal" class="mt-1 text-3xl font-black text-slate-950">Rp0</p>
+            </div>
+
+            <div class="space-y-2 text-sm">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-500">Subtotal</span>
+                <span id="posSubtotal" class="font-bold text-slate-900">Rp0</span>
+              </div>
+              <div>
+                <label class="app-label" for="posDiscountId">Diskon</label>
+                <select id="posDiscountId" class="app-input">
+                  <option value="">Tanpa diskon</option>
+                </select>
+                <p id="posDiscountMeta" class="mt-1 text-xs text-slate-500">Pilih diskon preset yang tersedia.</p>
+              </div>
+              <div>
+                <label class="app-label" for="posTax">Pajak</label>
+                <input id="posTax" class="app-input" type="number" min="0" step="1" value="0" />
+              </div>
+            </div>
+
+            <div>
+              <p class="app-label">Pembayaran</p>
+              <div id="posPaymentMethod" class="grid grid-cols-2 gap-2">
+                <label class="payment-method-option">
+                  <input class="peer sr-only" type="radio" name="paymentMethod" value="cash" checked />
+                  <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
+                    <i class="bx bx-money text-lg" aria-hidden="true"></i>
+                    Cash
+                  </span>
+                </label>
+                <label class="payment-method-option">
+                  <input class="peer sr-only" type="radio" name="paymentMethod" value="qris" />
+                  <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
+                    <i class="bx bx-qr-scan text-lg" aria-hidden="true"></i>
+                    QRIS
+                  </span>
+                </label>
+                <label class="payment-method-option">
+                  <input class="peer sr-only" type="radio" name="paymentMethod" value="transfer" />
+                  <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
+                    <i class="bx bx-transfer-alt text-lg" aria-hidden="true"></i>
+                    Transfer
+                  </span>
+                </label>
+                <label class="payment-method-option">
+                  <input class="peer sr-only" type="radio" name="paymentMethod" value="card" />
+                  <span class="flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">
+                    <i class="bx bx-credit-card text-lg" aria-hidden="true"></i>
+                    Card
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label class="app-label" for="posPaidAmount">Dibayar</label>
+              <input id="posPaidAmount" class="app-input" type="number" min="0" step="1" value="0" />
+            </div>
+
+            <div class="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
+              <span class="font-medium text-slate-500">Kembalian</span>
+              <span id="posChange" class="font-bold text-slate-900">Rp0</span>
+            </div>
+          </div>
+
+          <button id="posCheckoutButton" type="button" class="app-button-primary w-full">
+            <i class="bx bx-check-circle text-lg" aria-hidden="true"></i>
+            <span>Checkout</span>
+          </button>
         </div>
       </section>
     </section>

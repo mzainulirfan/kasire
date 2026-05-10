@@ -1,6 +1,7 @@
 function initSaleDetailPage() {
   const message = document.getElementById("saleDetailMessage");
   const receipt = document.getElementById("saleReceipt");
+  const printButton = document.getElementById("printReceiptButton");
   const saleId = window.location.pathname.split("/").filter(Boolean).at(-1);
 
   function formatCurrency(value) {
@@ -40,13 +41,13 @@ function initSaleDetailPage() {
 
     items.forEach((item) => {
       const row = document.createElement("article");
-      row.className = "flex items-start justify-between gap-4 py-3";
+      row.className = "receipt-print-row flex items-start justify-between gap-4 py-3";
       row.innerHTML = `
-        <div class="min-w-0">
-          <p class="font-bold text-slate-900"></p>
-          <p class="mt-1 text-sm text-slate-500"></p>
+        <div class="min-w-0 flex-1">
+          <p class="receipt-item-name font-bold text-slate-900"></p>
+          <p class="receipt-item-meta mt-1 text-sm text-slate-500"></p>
         </div>
-        <p class="shrink-0 font-bold text-slate-900"></p>
+        <p class="receipt-item-subtotal shrink-0 font-bold text-slate-900"></p>
       `;
       row.querySelectorAll("p")[0].textContent = item.productName;
       row.querySelectorAll("p")[1].textContent = `${item.quantity} x ${formatCurrency(item.price)} (${item.productSku})`;
@@ -97,9 +98,11 @@ function initSaleDetailPage() {
     }
   }
 
-  document.getElementById("printReceiptButton").addEventListener("click", () => {
-    window.print();
-  });
+  if (printButton) {
+    printButton.addEventListener("click", () => {
+      window.print();
+    });
+  }
 
   loadSale();
 }

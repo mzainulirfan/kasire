@@ -1,4 +1,4 @@
-function initPosPage() {
+function initPosPage(currentUser = null) {
   const message = document.getElementById("posMessage");
   const productSearch = document.getElementById("posProductSearch");
   const productGrid = document.getElementById("posProductGrid");
@@ -6,6 +6,10 @@ function initPosPage() {
   const customerSelect = document.getElementById("posCustomer");
   const cartItems = document.getElementById("posCartItems");
   const cartEmptyState = document.getElementById("posCartEmptyState");
+  const cartSummary = document.getElementById("posCartSummary");
+  const draftStatus = document.getElementById("posDraftStatus");
+  const cashierName = document.getElementById("posCashierName");
+  const productCount = document.getElementById("posProductCount");
   const discountSelect = document.getElementById("posDiscountId");
   const discountMeta = document.getElementById("posDiscountMeta");
   const taxInput = document.getElementById("posTax");
@@ -16,9 +20,21 @@ function initPosPage() {
   const changeText = document.getElementById("posChange");
   const checkoutButton = document.getElementById("posCheckoutButton");
   const checkoutText = checkoutButton.querySelector("span");
+  const draftStorageKey = "kasire.posDraft.v1";
   let products = [];
   let discounts = [];
   let cart = [];
+  let draftReady = false;
+
+  function syncCashierName() {
+    if (!cashierName) {
+      return;
+    }
+
+    cashierName.textContent = currentUser && (currentUser.name || currentUser.fullName || currentUser.email)
+      ? currentUser.name || currentUser.fullName || currentUser.email
+      : "Admin";
+  }
 
   function formatCurrency(value) {
     return new Intl.NumberFormat("id-ID", {
@@ -57,6 +73,138 @@ function initPosPage() {
   function getCartQuantity(productId) {
     const item = cart.find((cartItem) => cartItem.product.id === productId);
     return item ? item.quantity : 0;
+  }
+
+  function getCartItemCount() {
+    return cart.reduce((total, item) => total + item.quantity, 0);
+  }
+
+  function updateCartSummary(totals = calculateTotals()) {
+    if (!cartSummary) {
+      return;
+    }
+
+    if (!cart.length) {
+      cartSummary.textContent = "Cart kosong";
+      return;
+    }
+
+    const itemCount = getCartItemCount();
+    cartSummary.textContent = `${cart.length} jenis product | ${itemCount} item | ${formatCurrency(totals.total)}`;
+  }
+
+  function updateDraftStatus(text = "Draft tersimpan") {
+    if (!draftStatus) {
+      return;
+    }
+
+    draftStatus.classList.toggle("hidden", !cart.length);
+    draftStatus.textContent = text;
+  }
+
+  function getStoredDraft() {
+    try {
+      const rawDraft = localStorage.getItem(draftStorageKey);
+      return rawDraft ? JSON.parse(rawDraft) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function clearDraft() {
+    try {
+      localStorage.removeItem(draftStorageKey);
+    } catch (error) {
+      // Ignore storage errors so POS checkout remains usable.
+    }
+  }
+
+  function saveDraft() {
+    if (!draftReady) {
+      return;
+    }
+
+    if (!cart.length) {
+      clearDraft();
+      return;
+    }
+
+    const draft = {
+      customerId: customerSelect.value || "",
+      discountId: discountSelect.value || "",
+      tax: taxInput.value || "0",
+      paymentMethod: getPaymentMethod(),
+      paidAmount: paidAmountInput.value || "0",
+      items: cart.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity
+      })),
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem(draftStorageKey, JSON.stringify(draft));
+    } catch (error) {
+      setMessage("Draft transaksi tidak bisa disimpan di browser.", "error");
+    }
+  }
+
+  function restoreDraft() {
+    const draft = getStoredDraft();
+
+    if (!draft || !Array.isArray(draft.items) || !draft.items.length) {
+      return;
+    }
+
+    const restoredCart = [];
+    let hasAdjustedQuantity = false;
+
+    draft.items.forEach((draftItem) => {
+      const productId = Number(draftItem.productId);
+      const product = products.find((item) => item.id === productId);
+
+      if (!product || product.stock <= 0) {
+        return;
+      }
+
+      const quantity = Math.min(Math.max(Number(draftItem.quantity || 0), 1), product.stock);
+
+      if (quantity !== Number(draftItem.quantity || 0)) {
+        hasAdjustedQuantity = true;
+      }
+
+      restoredCart.push({ product, quantity });
+    });
+
+    cart = restoredCart;
+    customerSelect.value = draft.customerId || "";
+
+    if (discounts.some((discount) => String(discount.id) === String(draft.discountId))) {
+      discountSelect.value = String(draft.discountId);
+    } else {
+      discountSelect.value = "";
+    }
+
+    taxInput.value = draft.tax || "0";
+    paidAmountInput.value = draft.paidAmount || "0";
+
+    const paymentMethod = draft.paymentMethod || "cash";
+    const paymentMethodRadio = paymentMethodInput.querySelector(`input[name="paymentMethod"][value="${paymentMethod}"]`);
+
+    if (paymentMethodRadio) {
+      paymentMethodRadio.checked = true;
+    }
+
+    if (!cart.length) {
+      clearDraft();
+      return;
+    }
+
+    if (hasAdjustedQuantity) {
+      setMessage("Draft transaksi dipulihkan, beberapa qty disesuaikan dengan stok terbaru.", "error");
+    } else {
+      setMessage("Draft transaksi dipulihkan.", "success");
+    }
   }
 
   function calculateTotals() {
@@ -116,6 +264,10 @@ function initPosPage() {
 
   function renderProducts(items) {
     productGrid.replaceChildren();
+
+    if (productCount) {
+      productCount.textContent = `${items.length} item`;
+    }
 
     if (!items.length) {
       productGrid.classList.add("hidden");
@@ -216,6 +368,7 @@ function initPosPage() {
     subtotalText.textContent = formatCurrency(totals.subtotal);
     totalText.textContent = formatCurrency(totals.total);
     changeText.textContent = formatCurrency(totals.change);
+    updateCartSummary(totals);
     paidAmountInput.disabled = getPaymentMethod() !== "cash";
 
     if (getPaymentMethod() !== "cash") {
@@ -224,6 +377,8 @@ function initPosPage() {
 
     filterProducts();
     syncDiscountMeta();
+    saveDraft();
+    updateDraftStatus();
   }
 
   function addProduct(productId) {
@@ -345,6 +500,7 @@ function initPosPage() {
 
     checkoutButton.disabled = true;
     checkoutText.textContent = "Memproses...";
+    updateDraftStatus("Sedang checkout");
 
     try {
       const response = await fetch("/api/sales", {
@@ -371,11 +527,13 @@ function initPosPage() {
         throw new Error(result.message || "Gagal menyimpan transaksi.");
       }
 
+      clearDraft();
       window.location.href = `/sales/${result.sale.id}`;
     } catch (error) {
       setMessage(error.message, "error");
       checkoutButton.disabled = false;
       checkoutText.textContent = "Checkout";
+      updateDraftStatus();
     }
   }
 
@@ -414,20 +572,34 @@ function initPosPage() {
     input.addEventListener("input", renderCart);
     input.addEventListener("change", renderCart);
   });
+  customerSelect.addEventListener("change", renderCart);
   paymentMethodInput.addEventListener("change", renderCart);
 
   productSearch.addEventListener("input", filterProducts);
   checkoutButton.addEventListener("click", checkout);
 
-  Promise.all([loadCustomers(), loadProducts()])
-    .then(renderCart)
-    .catch((error) => setMessage(error.message, "error"));
+  syncCashierName();
 
-  loadDiscounts()
-    .then(renderCart)
-    .catch((error) => {
-      discounts = [];
-      syncDiscountMeta();
-      setMessage(error.message, "error");
+  Promise.allSettled([loadCustomers(), loadProducts(), loadDiscounts()])
+    .then((results) => {
+      const [customerResult, productResult, discountResult] = results;
+
+      if (discountResult.status === "rejected") {
+        discounts = [];
+        syncDiscountMeta();
+      }
+
+      if (productResult.status === "fulfilled") {
+        restoreDraft();
+        draftReady = true;
+      }
+
+      renderCart();
+
+      const failedResult = [customerResult, productResult, discountResult].find((result) => result.status === "rejected");
+
+      if (failedResult) {
+        setMessage(failedResult.reason.message, "error");
+      }
     });
 }

@@ -13,8 +13,8 @@ const routes = {
     init: initFormPage
   },
   dashboard: {
-    title: "Dashboard User",
-    description: "Ringkasan data user yang tersimpan.",
+    title: "Dashboard KASIRE",
+    description: "Ringkasan penjualan, produk, dan pengguna sistem.",
     content: "/pages/dashboard/index.html",
     init: initDashboardPage
   },
@@ -60,6 +60,12 @@ const routes = {
     content: "/pages/product/form.html",
     init: initProductCreatePage
   },
+  "products/edit": {
+    title: "Edit Product",
+    description: "Perbarui data product yang tersimpan.",
+    content: "/pages/product/form.html",
+    init: initProductCreatePage
+  },
   "products/view": {
     title: "Detail Product",
     description: "Informasi detail product yang tersimpan.",
@@ -86,6 +92,10 @@ function getCurrentPage() {
 
   if (/^products\/[^/]+$/.test(page) && page !== "products/new") {
     return "products/view";
+  }
+
+  if (/^products\/[^/]+\/edit$/.test(page)) {
+    return "products/edit";
   }
 
   if (/^sales\/[^/]+$/.test(page)) {
@@ -125,6 +135,33 @@ function updateActiveMenu(page) {
     const isActive = item.dataset.menu === activeMenu;
     item.className = isActive ? "sidebar-link-active" : "sidebar-link";
   });
+}
+
+function getPosDraftItemCount() {
+  try {
+    const rawDraft = localStorage.getItem("kasire.posDraft.v1");
+    const draft = rawDraft ? JSON.parse(rawDraft) : null;
+
+    if (!draft || !Array.isArray(draft.items)) {
+      return 0;
+    }
+
+    return draft.items.reduce((total, item) => total + Math.max(Number(item.quantity || 0), 0), 0);
+  } catch (error) {
+    return 0;
+  }
+}
+
+function updatePosDraftBadge() {
+  const badge = document.querySelector("[data-pos-draft-badge]");
+
+  if (!badge) {
+    return;
+  }
+
+  const itemCount = getPosDraftItemCount();
+  badge.classList.toggle("hidden", itemCount <= 0);
+  badge.textContent = "";
 }
 
 function updateLayoutMode(page) {
@@ -249,6 +286,7 @@ async function loadPage() {
   const pageContent = document.getElementById("pageContent");
   const sidebar = document.getElementById("appSidebar");
   const header = document.getElementById("appHeader");
+  let currentUser = null;
 
   document.title = route.title;
   updateLayoutMode(page);
@@ -266,6 +304,8 @@ async function loadPage() {
         return;
       }
 
+      currentUser = user;
+
       if (page === "pos") {
         sidebar.innerHTML = "";
         header.innerHTML = "";
@@ -274,13 +314,14 @@ async function loadPage() {
         updateHeader(route);
         updateHeaderUser(user);
         updateActiveMenu(page);
+        updatePosDraftBadge();
         setupLogout();
         setupProfileMenu();
       }
     }
 
     pageContent.innerHTML = await fetchHtml(route.content);
-    route.init();
+    route.init(currentUser);
   } catch (error) {
     pageContent.innerHTML = '<section class="rounded-lg bg-white p-6 text-sm text-red-600 shadow">Gagal memuat konten halaman.</section>';
   }

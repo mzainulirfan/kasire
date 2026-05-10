@@ -2,8 +2,10 @@ function initProductPage() {
   const totalProducts = document.getElementById("totalProducts");
   const availableStock = document.getElementById("availableStock");
   const totalCategories = document.getElementById("totalCategories");
+  const emptyStockProducts = document.getElementById("emptyStockProducts");
   const productMessage = document.getElementById("productMessage");
   const productSearch = document.getElementById("productSearch");
+  const productResultCount = document.getElementById("productResultCount");
   const productTable = document.getElementById("productTable");
   const tableWrapper = document.getElementById("productTableWrapper");
   const emptyState = document.getElementById("productEmptyState");
@@ -110,12 +112,38 @@ function initProductPage() {
     cell.className = "table-cell";
 
     const badge = document.createElement("span");
-    const isAvailable = product.status === "active" && product.stock > 0;
-    badge.className = isAvailable ? "status-badge status-badge-active" : "status-badge status-badge-empty";
-    badge.textContent = isAvailable ? "Aktif" : "Stok kosong";
+    const isEmpty = product.stock <= 0;
+    const isLowStock = product.stock > 0 && product.stock <= 5;
+
+    if (isEmpty) {
+      badge.className = "status-badge status-badge-empty";
+      badge.textContent = "Stok kosong";
+    } else if (isLowStock) {
+      badge.className = "status-badge bg-amber-50 text-amber-700";
+      badge.textContent = "Stok rendah";
+    } else {
+      badge.className = "status-badge status-badge-active";
+      badge.textContent = "Aktif";
+    }
+
     cell.appendChild(badge);
 
     return cell;
+  }
+
+  function updateProductSummary(products) {
+    totalProducts.textContent = String(allProducts.length);
+    availableStock.textContent = String(allProducts.reduce((total, product) => total + product.stock, 0));
+    totalCategories.textContent = String(new Set(allProducts.map((product) => product.category)).size);
+
+    if (emptyStockProducts) {
+      emptyStockProducts.textContent = String(allProducts.filter((product) => product.stock <= 0).length);
+    }
+
+    if (productResultCount) {
+      const keyword = productSearch.value.trim();
+      productResultCount.textContent = keyword ? `${products.length} hasil ditemukan` : `${products.length} product`;
+    }
   }
 
   function createActionCell(product) {
@@ -130,6 +158,11 @@ function initProductPage() {
     link.href = `/products/${product.id}`;
     link.innerHTML = '<i class="bx bx-show text-base" aria-hidden="true"></i><span>View</span>';
 
+    const editLink = document.createElement("a");
+    editLink.className = "admin-button";
+    editLink.href = `/products/${product.id}/edit`;
+    editLink.innerHTML = '<i class="bx bx-pencil text-base" aria-hidden="true"></i><span>Edit</span>';
+
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.className = "delete-button";
@@ -137,6 +170,7 @@ function initProductPage() {
     deleteButton.innerHTML = '<i class="bx bx-trash text-base" aria-hidden="true"></i><span>Hapus</span>';
 
     actions.appendChild(link);
+    actions.appendChild(editLink);
     actions.appendChild(deleteButton);
     cell.appendChild(actions);
     return cell;
@@ -189,9 +223,7 @@ function initProductPage() {
   function renderProducts(products) {
     productTable.replaceChildren();
     showFlashMessage();
-    totalProducts.textContent = allProducts.length;
-    availableStock.textContent = allProducts.reduce((total, product) => total + product.stock, 0);
-    totalCategories.textContent = new Set(allProducts.map((product) => product.category)).size;
+    updateProductSummary(products);
 
     if (!allProducts.length) {
       tableWrapper.classList.add("hidden");
@@ -216,8 +248,8 @@ function initProductPage() {
       row.appendChild(createProductCell(product));
       row.appendChild(createCell(product.sku));
       row.appendChild(createCell(product.category));
-      row.appendChild(createCell(formatCurrency(product.price)));
-      row.appendChild(createCell(String(product.stock)));
+      row.appendChild(createCell(formatCurrency(product.price), "text-right font-bold text-slate-900"));
+      row.appendChild(createCell(String(product.stock), "text-right font-bold text-slate-900"));
       row.appendChild(createStatusCell(product));
       row.appendChild(createActionCell(product));
       productTable.appendChild(row);

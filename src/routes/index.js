@@ -9,7 +9,7 @@ const {
   toPublicAdmin
 } = require("../lib/adminsStore");
 const { readUsers, saveUsers } = require("../lib/usersStore");
-const { readProducts, findProductBySku, findProductById, createProduct, deleteProductById } = require("../lib/productsStore");
+const { readProducts, findProductBySku, findProductById, createProduct, updateProduct, deleteProductById } = require("../lib/productsStore");
 const { readCategories, findCategoryByName, createCategory, isCategoryUsed, deleteCategoryById } = require("../lib/categoriesStore");
 const { readDiscounts, findDiscountById, createDiscount, deleteDiscountById } = require("../lib/discountsStore");
 const { createSale, readSales, findSaleById } = require("../lib/salesStore");
@@ -199,6 +199,10 @@ function registerRoutes(app, options) {
   });
 
   app.get("/products/new", requireAuthPage, (req, res) => {
+    res.sendFile(path.join(publicDir, "index.html"));
+  });
+
+  app.get("/products/:id/edit", requireAuthPage, (req, res) => {
     res.sendFile(path.join(publicDir, "index.html"));
   });
 
@@ -414,6 +418,121 @@ function registerRoutes(app, options) {
 
     return res.status(201).json({
       message: "Product berhasil ditambahkan.",
+      product
+    });
+  });
+
+  app.put("/api/products/:id", requireAuthApi, handleProductImagesUpload, (req, res) => {
+    const productId = Number(req.params.id);
+    const name = typeof req.body.name === "string" ? req.body.name.trim() : "";
+    const sku = typeof req.body.sku === "string" ? req.body.sku.trim().toUpperCase() : "";
+    const category = typeof req.body.category === "string" ? req.body.category.trim() : "";
+    const price = Number(req.body.price);
+    const stock = Number(req.body.stock);
+    const files = Array.isArray(req.files) ? req.files : [];
+    let keptImageIds = [];
+
+    function fail(status, message) {
+      deleteUploadedProductFiles(files);
+      return res.status(status).json({ message });
+    }
+
+    if (!Number.isFinite(productId)) {
+      return fail(400, "ID product tidak valid.");
+    }
+
+    const existingProduct = findProductById(productId);
+
+    if (!existingProduct) {
+      return fail(404, "Product tidak ditemukan.");
+    }
+
+    if (!name || !sku || !category) {
+      return fail(400, "Nama product, SKU, dan kategori wajib diisi.");
+    }
+
+    if (!findCategoryByName(category)) {
+      return fail(400, "Kategori product tidak valid.");
+    }
+
+    if (!Number.isFinite(price) || price < 0) {
+      return fail(400, "Harga product tidak valid.");
+    }
+
+    if (!Number.isInteger(stock) || stock < 0) {
+      return fail(400, "Stok product tidak valid.");
+    }
+
+    const duplicateProduct = findProductBySku(sku);
+
+    if (duplicateProduct && duplicateProduct.id !== productId) {
+      return fail(409, "SKU product sudah terdaftar.");
+    }
+
+    try {
+      keptImageIds = JSON.parse(req.body.keptImageIds || "[]");
+    } catch (error) {
+      return fail(400, "Data foto product tidak valid.");
+    }
+
+    if (!Array.isArray(keptImageIds)) {
+      return fail(400, "Data foto product tidak valid.");
+    }
+
+    const validKeptImageIds = new Set((existingProduct.images || []).map((image) => image.id));
+    keptImageIds = keptImageIds.map(Number).filter((imageId) => validKeptImageIds.has(imageId));
+
+    if (keptImageIds.length + files.length <= 0) {
+      return fail(400, "Minimal 1 foto product wajib dipilih.");
+    }
+
+    if (keptImageIds.length + files.length > MAX_PRODUCT_IMAGES) {
+      return fail(400, `Maksimal ${MAX_PRODUCT_IMAGES} foto product.`);
+    }
+
+    const validImages = files.slice(0, MAX_PRODUCT_IMAGES).map((file) => ({
+      imagePath: file.filename,
+      fileName: file.originalname,
+      mimeType: file.mimetype,
+      isPrimary: false
+    }));
+
+    const primaryImageKey = typeof req.body.primaryImageKey === "string" ? req.body.primaryImageKey : "";
+    const validPrimaryKeys = new Set([
+      ...keptImageIds.map((imageId) => `existing:${imageId}`),
+      ...validImages.map((image, index) => `new:${index}`)
+    ]);
+    const resolvedPrimaryImageKey = validPrimaryKeys.has(primaryImageKey)
+      ? primaryImageKey
+      : Array.from(validPrimaryKeys)[0];
+    const removedImages = (existingProduct.images || []).filter((image) => !keptImageIds.includes(image.id));
+
+    let product;
+
+    try {
+      product = updateProduct(productId, {
+        name,
+        sku,
+        category,
+        price,
+        stock,
+        keptImageIds,
+        images: validImages,
+        primaryImageKey: resolvedPrimaryImageKey
+      });
+    } catch (error) {
+      deleteUploadedProductFiles(files);
+      return res.status(500).json({ message: "Gagal memperbarui product." });
+    }
+
+    deleteUploadedProductFiles(
+      removedImages
+        .filter((image) => image.imagePath)
+        .map((image) => ({ path: path.join(PRODUCT_UPLOAD_DIR, image.imagePath) }))
+    );
+
+    return res.json({
+      message: "Product berhasil diperbarui.",
       product
     });
   });

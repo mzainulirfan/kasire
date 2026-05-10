@@ -1,33 +1,54 @@
-<section class="space-y-6">
+<section class="space-y-4">
   <div id="salesMessage" class="alert hidden"></div>
 
+  <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900">Transactions</h2>
+      <p class="text-sm text-slate-500">Riwayat penjualan POS.</p>
+    </div>
+    <a href="/pos" class="app-button-primary">
+      <i class="bx bx-cart text-lg" aria-hidden="true"></i>
+      Buka POS
+    </a>
+  </header>
+
+  <section class="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="app-card p-4">
+      <p class="text-xs font-bold uppercase text-slate-500">Total Transaksi</p>
+      <p id="salesTotalCount" class="mt-2 text-2xl font-black text-slate-900">0</p>
+    </article>
+    <article class="app-card p-4">
+      <p class="text-xs font-bold uppercase text-slate-500">Total Penjualan</p>
+      <p id="salesTotalAmount" class="mt-2 text-2xl font-black text-slate-900">Rp0</p>
+    </article>
+    <article class="app-card p-4">
+      <p class="text-xs font-bold uppercase text-slate-500">Transaksi Terbaru</p>
+      <p id="salesLatestDate" class="mt-2 text-sm font-bold text-slate-900">-</p>
+    </article>
+    <article class="app-card p-4">
+      <p class="text-xs font-bold uppercase text-slate-500">Pembayaran</p>
+      <p id="salesPaymentSummary" class="mt-2 text-sm font-bold text-slate-900">-</p>
+    </article>
+  </section>
+
   <section class="app-card overflow-hidden">
-    <div class="flex flex-col gap-3 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h2 class="text-lg font-bold text-slate-900">Transactions</h2>
-        <p class="text-sm text-slate-500">Riwayat transaksi dari POS.</p>
+    <div class="flex flex-col gap-3 border-b border-slate-200 p-4 md:flex-row md:items-center md:justify-between">
+      <div class="relative w-full md:max-w-md">
+        <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400" aria-hidden="true"></i>
+        <input id="salesSearch" class="app-input app-input-with-icon" type="search" placeholder="Cari invoice, customer, kasir, metode..." />
       </div>
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <div class="relative w-full sm:w-72">
-          <i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-lg text-slate-400" aria-hidden="true"></i>
-          <input id="salesSearch" class="app-input app-input-with-icon" type="search" placeholder="Cari invoice/customer..." />
-        </div>
-        <a href="/pos" class="app-button-primary">
-          <i class="bx bx-cart text-lg" aria-hidden="true"></i>
-          Buka POS
-        </a>
-      </div>
+      <span id="salesResultCount" class="text-sm font-bold text-slate-500">0 transaksi</span>
     </div>
 
     <div id="salesTableWrapper" class="overflow-x-auto">
       <table class="w-full min-w-[860px] text-left">
-        <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+        <thead class="bg-slate-50 text-xs uppercase text-slate-500">
           <tr>
             <th class="px-4 py-3 font-bold">Invoice</th>
             <th class="px-4 py-3 font-bold">Customer</th>
             <th class="px-4 py-3 font-bold">Kasir</th>
             <th class="px-4 py-3 font-bold">Pembayaran</th>
-            <th class="px-4 py-3 font-bold">Total</th>
+            <th class="px-4 py-3 text-right font-bold">Total</th>
             <th class="px-4 py-3 font-bold">Tanggal</th>
             <th class="px-4 py-3 text-right font-bold">Aksi</th>
           </tr>

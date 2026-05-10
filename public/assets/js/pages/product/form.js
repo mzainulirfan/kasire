@@ -1,6 +1,11 @@
 function initProductCreatePage() {
   const MAX_PRODUCT_IMAGES = 4;
+  const pathParts = window.location.pathname.split("/").filter(Boolean);
+  const isEditMode = pathParts[0] === "products" && pathParts[2] === "edit";
+  const productId = isEditMode ? Number(pathParts[1]) : null;
   const form = document.getElementById("productForm");
+  const title = document.getElementById("productFormTitle");
+  const description = document.getElementById("productFormDescription");
   const message = document.getElementById("productFormMessage");
   const submitButton = document.getElementById("productSubmitButton");
   const submitText = submitButton.querySelector("span");
@@ -11,6 +16,12 @@ function initProductCreatePage() {
   let selectedImages = [];
   let primaryImageIndex = 0;
   let replaceImageIndex = null;
+
+  if (isEditMode) {
+    title.textContent = "Edit Product";
+    description.textContent = "Perbarui data product yang tersimpan.";
+    submitText.textContent = "Update Product";
+  }
 
   async function loadCategories() {
     const categorySelect = document.getElementById("category");
@@ -74,7 +85,9 @@ function initProductCreatePage() {
 
   function setSubmitState(isSubmitting) {
     submitButton.disabled = isSubmitting;
-    submitText.textContent = isSubmitting ? "Menyimpan..." : "Simpan Product";
+    submitText.textContent = isSubmitting
+      ? "Menyimpan..."
+      : (isEditMode ? "Update Product" : "Simpan Product");
   }
 
   function syncImageUploadState() {
@@ -274,6 +287,50 @@ function initProductCreatePage() {
     }));
   }
 
+  function fillForm(product) {
+    form.elements.name.value = product.name || "";
+    form.elements.sku.value = product.sku || "";
+    form.elements.category.value = product.category || "";
+    form.elements.price.value = String(product.price || 0);
+    form.elements.stock.value = String(product.stock || 0);
+    selectedImages = (product.images || []).slice(0, MAX_PRODUCT_IMAGES).map((image) => ({
+      existingId: image.id,
+      previewUrl: image.imageUrl || image.imageData,
+      file: null,
+      fileName: image.fileName || `product-${image.id}`,
+      isPrimary: Boolean(image.isPrimary)
+    }));
+    primaryImageIndex = Math.max(selectedImages.findIndex((image) => image.isPrimary), 0);
+    normalizePrimaryImage();
+    renderImagePreview();
+  }
+
+  async function loadProductForEdit() {
+    if (!isEditMode) {
+      return;
+    }
+
+    if (!Number.isFinite(productId)) {
+      setMessage("ID product tidak valid.", "error");
+      submitButton.disabled = true;
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/products/${productId}`);
+      const result = await parseJsonResponse(response);
+
+      if (!response.ok) {
+        throw new Error(result.message || "Gagal memuat product.");
+      }
+
+      fillForm(result);
+    } catch (error) {
+      setMessage(error.message, "error");
+      submitButton.disabled = true;
+    }
+  }
+
   imageInput.addEventListener("change", async () => {
     const files = Array.from(imageInput.files);
 
@@ -368,7 +425,7 @@ function initProductCreatePage() {
   });
 
   renderImagePreview();
-  loadCategories();
+  loadCategories().then(loadProductForEdit);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -398,12 +455,41 @@ function initProductCreatePage() {
       payload.append("category", data.category);
       payload.append("price", String(data.price));
       payload.append("stock", String(data.stock));
-      payload.append("primaryImageIndex", String(primaryImageIndex));
+      const newImages = [];
+      const keptImageIds = [];
+
       selectedImages.forEach((image) => {
-        payload.append("images", image.file, image.fileName);
+        if (image.existingId) {
+          keptImageIds.push(image.existingId);
+          return;
+        }
+
+        newImages.push(image);
       });
-      const response = await fetch("/api/products", {
-        method: "POST",
+
+      if (isEditMode) {
+        const primaryImage = selectedImages[primaryImageIndex];
+        const primaryNewImageIndex = primaryImage && !primaryImage.existingId
+          ? newImages.indexOf(primaryImage)
+          : -1;
+        const primaryImageKey = primaryImage && primaryImage.existingId
+          ? `existing:${primaryImage.existingId}`
+          : `new:${primaryNewImageIndex}`;
+
+        payload.append("keptImageIds", JSON.stringify(keptImageIds));
+        payload.append("primaryImageKey", primaryImageKey);
+        newImages.forEach((image) => {
+          payload.append("images", image.file, image.fileName);
+        });
+      } else {
+        payload.append("primaryImageIndex", String(primaryImageIndex));
+        selectedImages.forEach((image) => {
+          payload.append("images", image.file, image.fileName);
+        });
+      }
+
+      const response = await fetch(isEditMode ? `/api/products/${productId}` : "/api/products", {
+        method: isEditMode ? "PUT" : "POST",
         body: payload
       });
 

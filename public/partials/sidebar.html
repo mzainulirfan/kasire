@@ -3,46 +3,68 @@
   <div class="mb-6 flex items-center gap-3">
     <span
       class="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-600 text-white shadow-sm shadow-blue-200">
-      <i class="bx bx-id-card text-2xl" aria-hidden="true"></i>
+      <i class="bx bx-store text-2xl" aria-hidden="true"></i>
     </span>
-    <div>
-      <p class="font-semibold tracking-tight">Data User</p>
-      <p class="text-xs text-slate-500">Management App</p>
+    <div class="min-w-0">
+      <p class="truncate text-base font-bold tracking-tight text-slate-950">KASIRE</p>
+      <p class="truncate text-xs font-medium text-slate-500">Point of Sale</p>
     </div>
   </div>
 
-  <nav class="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
-    <a href="/dashboard" data-menu="dashboard" class="sidebar-link">
-      <i class="bx bx-grid-alt text-xl" aria-hidden="true"></i>
-      Dashboard
-    </a>
-    <a href="/pos" data-menu="pos" class="sidebar-link">
-      <i class="bx bx-cart text-xl" aria-hidden="true"></i>
-      POS
-    </a>
-    <a href="/sales" data-menu="sales" class="sidebar-link">
-      <i class="bx bx-receipt text-xl" aria-hidden="true"></i>
-      Transactions
-    </a>
-    <a href="/users" data-menu="form" class="sidebar-link">
-      <i class="bx bx-user text-xl" aria-hidden="true"></i>
-      Users Management
-    </a>
-    <a href="/products" data-menu="products" class="sidebar-link">
-      <i class="bx bx-box text-xl" aria-hidden="true"></i>
-      Products
-    </a>
-    <a href="/categories" data-menu="categories" class="sidebar-link">
-      <i class="bx bx-category text-xl" aria-hidden="true"></i>
-      Category
-    </a>
-    <a href="/discounts" data-menu="discounts" class="sidebar-link">
-      <i class="bx bx-purchase-tag text-xl" aria-hidden="true"></i>
-      Discount
-    </a>
-    <a href="/settings" data-menu="settings" class="sidebar-link">
-      <i class="bx bx-cog text-xl" aria-hidden="true"></i>
-      Setting
-    </a>
+  <nav aria-label="Navigasi utama" class="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-5 lg:overflow-visible lg:pb-0">
+    <div class="contents lg:flex lg:flex-col lg:gap-1">
+      <p class="hidden px-3 text-[0.68rem] font-bold uppercase tracking-wider text-slate-400 lg:block">
+        Operasional
+      </p>
+      <a href="/dashboard" data-menu="dashboard" class="sidebar-link">
+        <i class="bx bx-grid-alt text-xl" aria-hidden="true"></i>
+        Dashboard
+      </a>
+      <a href="/pos" data-menu="pos" class="sidebar-link">
+        <i class="bx bx-cart text-xl" aria-hidden="true"></i>
+        <span>POS</span>
+        <span
+          data-pos-draft-badge
+          class="hidden"
+          title="Ada transaksi POS yang belum selesai"
+          aria-label="Ada transaksi POS yang belum selesai"></span>
+      </a>
+      <a href="/sales" data-menu="sales" class="sidebar-link">
+        <i class="bx bx-receipt text-xl" aria-hidden="true"></i>
+        Transaksi
+      </a>
+    </div>
+
+    <div class="contents lg:flex lg:flex-col lg:gap-1">
+      <p class="hidden px-3 text-[0.68rem] font-bold uppercase tracking-wider text-slate-400 lg:block">
+        Master Data
+      </p>
+      <a href="/products" data-menu="products" class="sidebar-link">
+        <i class="bx bx-box text-xl" aria-hidden="true"></i>
+        Produk
+      </a>
+      <a href="/categories" data-menu="categories" class="sidebar-link">
+        <i class="bx bx-category text-xl" aria-hidden="true"></i>
+        Kategori
+      </a>
+      <a href="/discounts" data-menu="discounts" class="sidebar-link">
+        <i class="bx bx-purchase-tag text-xl" aria-hidden="true"></i>
+        Diskon
+      </a>
+      <a href="/users" data-menu="form" class="sidebar-link">
+        <i class="bx bx-user text-xl" aria-hidden="true"></i>
+        Pengguna
+      </a>
+    </div>
+
+    <div class="contents lg:flex lg:flex-col lg:gap-1">
+      <p class="hidden px-3 text-[0.68rem] font-bold uppercase tracking-wider text-slate-400 lg:block">
+        Sistem
+      </p>
+      <a href="/settings" data-menu="settings" class="sidebar-link">
+        <i class="bx bx-cog text-xl" aria-hidden="true"></i>
+        Pengaturan
+      </a>
+    </div>
   </nav>
 </div>
